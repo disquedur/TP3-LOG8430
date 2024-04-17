@@ -1,0 +1,46 @@
+version: '3'
+
+networks:
+  redis-network:
+    driver: bridge
+
+services:
+  redis-master:
+    image: redis:latest
+    networks:
+      - redis-network
+    hostname: redis-master
+    volumes:
+      - ./master:/data
+    command: redis-server --appendonly yes
+  
+  redis-slave-1:
+    image: redis:latest
+    networks:
+      - redis-network
+    hostname: redis-slave-1
+    volumes:
+      - ./slave1:/data
+    command: redis-server --appendonly yes --slaveof redis-master 6379
+  
+  redis-slave-2:
+    image: redis:latest
+    networks:
+      - redis-network
+    hostname: redis-slave-2
+    volumes:
+      - ./slave2:/data
+    command: redis-server --appendonly yes --slaveof redis-master 6379
+
+  redis-insight:
+    image: redislabs/redisinsight
+    ports:
+      - 8001:8001
+    networks:
+      - redis-network
+    volumes:
+      - ./redisinsight:/db
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
