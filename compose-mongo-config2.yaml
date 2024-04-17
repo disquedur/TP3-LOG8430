@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  mongo1:
+    image: mongo:5
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+    ports:
+      - "27017:27017"
+    networks:
+      - mongoCluster
+    volumes:
+      - mongo1-data:/data/db
+
+  mongo2:
+    image: mongo:5
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+    ports:
+      - "27018:27017"
+    networks:
+      - mongoCluster
+    volumes:
+      - mongo2-data:/data/db
+
+  mongo3:
+    image: mongo:5
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+    ports:
+      - "27019:27017"
+    networks:
+      - mongoCluster
+    volumes:
+      - mongo3-data:/data/db
+
+networks:
+  mongoCluster:
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
